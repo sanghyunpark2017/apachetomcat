@@ -18,8 +18,9 @@ wget http://10.10.63.63:8089/downloads/tomcat/apache-tomcat-8.5.30_r20180403.tar
 wget http://10.10.63.63:8089/downloads/tomcat/apache-tomcat-9.0.7_r20180407.tar.gz
 wget http://10.10.63.63:8089/downloads/tomcat/commons-lang3-3.3.2.jar
 
+
 ###########################
-# JAVA 설치
+# JAVA 설치(root계정)
 ###########################
 
 ### 다운로드 및 압축풀기
@@ -32,10 +33,20 @@ chmod 755 jdk-6u45-linux-x64.bin
 ln -s jdk1.6.0_45 java
 rm jdk-6u45-linux-x64.bin
 
-### 환경변수등록
+###########################
+# 계정생성 및 소유자변경
+###########################
+useradd wasadm
+passwd wasadm
+chown -R wasadm:wasadm /app/java
 
 
-#프로파일(apache, root)
+###########################
+# 환경변수등록
+###########################
+
+#root 프로파일
+su - 
 vi /root/.bash_profile
 ------------------------------------------------------------------------------------
 # User specific environment and startup programs
@@ -48,12 +59,8 @@ export CLASSPATH=$CLASSPATH:$JAVA_HOME/lib/tools.jar
 ------------------------------------------------------------------------------------
 
 
-#프로파일(tomcat, wasadm)
-useradd wasadm
-passwd wasadm
-
+#wasadm 프로파일
 su - wasadm
-
 vi .bash_profile
 ------------------------------------------------------------------------------------
 # User specific environment and startup programs
