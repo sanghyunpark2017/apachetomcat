@@ -1,5 +1,7 @@
 
 
+mkdir -p /app/src
+mkdir -p /app/webapps
 
 
 
