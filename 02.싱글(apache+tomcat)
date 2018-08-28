@@ -109,9 +109,9 @@ bk httpd-ssl.conf
 # apache : httpd.conf 설정
 ##########################################
 
-
+#<Dicrectory> 태그 2개를 지우고 그 자리에 넣는다.
+vi /app/apache24/conf/httpd.conf
 ---------------------------------------------------------------------------------------------
-cat << EOF >> /app/apache24/conf/httpd.conf
 ### Global section
 Include conf/extra/httpd-mpm.conf
 Include conf/extra/httpd-vhosts.conf
@@ -128,7 +128,6 @@ CustomLog "|/app/apache24/bin/rotatelogs /logs/access.%y%m%d.log 86400 540" comm
     Allow from all
     Require all granted
 </Directory>
-EOF
 ---------------------------------------------------------------------------------------------
 
 #mod_ssl 주석해제
@@ -243,6 +242,9 @@ start|stop|restart|graceful|graceful-stop)
 /app/apache24/bin/apachectl start
 
 
+#####################
+# WWW ROOT에 파일넣기
+#####################
 
 
 
