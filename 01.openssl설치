@@ -3,7 +3,7 @@
 ##########    13. OpenSSL update        ##########  
 ##################################################
 
-1. 툴설치
+1. 툴설치(Centos7)
 yum groupinstall -y "Development tools"
 yum install -y perl-CGI
 yum install -y wget
@@ -21,18 +21,16 @@ make
 make test
 make install
 
-5. 구버전 백업
+5. 이전 버전 백업(파일명 뒤에 버전)
 which openssl
 /usr/bin/openssl version
 ls -al /usr/bin/openssl
-
-#버전에 맞게 백업
 mv /usr/bin/openssl /usr/bin/openssl.0.2K-fips
 
-6. 신규 설치 버전 심볼릭 링크 설정
+6. 신규 버전을 심볼릭 링크로 설정
 ln -s /usr/local/ssl/bin/openssl /usr/bin/openssl
 
-7. 신규 설치 버전 확인
+7. 신규 버전 확인
 which openssl
 /usr/bin/openssl version
 
