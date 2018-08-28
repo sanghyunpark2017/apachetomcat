@@ -187,8 +187,11 @@ ll
 #vi /app/apache24/conf/extra/httpd-ssl.conf
 ---------------------------------------------------------------------------------------------
 cat << EOF > /app/apache24/conf/extra/httpd-ssl.conf
+
+Listen 443
+
 <VirtualHost *:443>
-    ServerName 10.10.64.90
+    ServerName devaaf.homeplus.co.kr
     DocumentRoot "/app/webapps"
     ErrorLog "|/app/apache24/bin/rotatelogs logs/ssl_error.%Y-%m-%d.log 86400 540"
     CustomLog "|/app/apache24/bin/rotatelogs logs/ssl_access.%Y-%m-%d.log 86400 540" combined
