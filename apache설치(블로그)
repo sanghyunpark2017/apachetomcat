@@ -1,4 +1,6 @@
 
+http://fmd1225.tistory.com/43
+
 CentOS 7 + Apache 2.4.X 설치 + Apr + Apr-Util + Pcre
 
  
@@ -7,10 +9,9 @@ apache 2.4 버전 설치부터는 아래의 모듈이 서버에 설치되어 있
 
  
 
-일단 저는 /app/source/apache
-
-              /app/source/apr
-
+일단 저는
+/app/source/apache
+/app/source/apr
 
 
 #gcc* 설치
@@ -45,25 +46,15 @@ make && make install
  
 
 [make 시 에러]
-
 xml/apr_xml.c:35:19: fatal error: expat.h: 그런 파일이나 디렉터리가 없습니다
-
- #include <expat.h>
-
-                   ^
-
+#include <expat.h>
+             ^
 compilation terminated.
-
 make[1]: *** [xml/apr_xml.lo] 오류 1
-
 make[1]: Leaving directory `/app/src/apr-util-1.6.0'
-
 make: *** [all-recursive] 오류 1
 
-
-
 아래처럼 expat-devel 설치후 진행
-
 yum install expat-devel
 
 
@@ -120,7 +111,9 @@ make && make install
 
 apache 설정변경
 
-vi /app/bin/apache/conf/httpd.conf
+#vi /app/bin/apache/conf/httpd.conf
+vi /app/web/httpd-2.4.26/conf/httpd.conf
+
 
 - Listen 80
 
@@ -130,7 +123,9 @@ vi /app/bin/apache/conf/httpd.conf
 
  
 
-vi /app/bin/apache/conf/extra/httpd-vhosts.conf
+#vi /app/bin/apache/conf/extra/httpd-vhosts.conf
+vi /app/web/httpd-2.4.26/conf/extra/httpd-vhosts.conf
+
 Port 80에서 다른걸로 변경 (80은 root권한으로만 띄울 수 있음) 
 DocumentRoot 변경
 
@@ -138,7 +133,10 @@ DocumentRoot 변경
 
 apache 시작
 
-/app/bin/apache/bin/apachectl start  또는 service httpd start
+#/app/bin/apache/bin/apachectl start  또는 service httpd start
+cd /app/web/httpd-2.4.26/bin
+./apachectl start
+
 
 chkconfig apachectl on 또는 chkconfig httpd on
 
