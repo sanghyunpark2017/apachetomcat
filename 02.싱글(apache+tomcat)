@@ -1,5 +1,5 @@
 
-
+#필요한 툴 설치(Centos7)
 yum install expat-devel
 yum install gcc*
 
@@ -24,20 +24,20 @@ make && make install
 ### 소스파일 준비(httpd-2.4.33)
 #apr과 apr-util은 apache src 하위 디렉토리로 옮긴다
 
-1. apache 다운로드
+1. apache 다운로드 후 압축풀기
 mkdir -p /app/src
 cd /app/src
 wget http://apache.mirror.cdnetworks.com/httpd/httpd-2.4.34.tar.gz 
 tar zxvf httpd-2.4.34.tar.gz
 
-2. apr 다운로드
+2. apr 다운로드 후 압출풀어서 아파치소스 디렉토리 밑에 옮김
 cd /app/src
 wget http://apache.mirror.cdnetworks.com/apr/apr-1.6.3.tar.gz
 tar zxvf apr-1.6.3.tar.gz
 mv apr-1.6.3 /app/src/httpd-2.4.34/srclib/apr
 ll /app/src/httpd-2.4.34/srclib/
 
-3. apr-util 다운로드
+3. apr-util 다운로드 후 압출풀어서 아파치소스 디렉토리 밑에 옮김
 cd /app/src
 wget http://apache.mirror.cdnetworks.com/apr/apr-util-1.6.1.tar.gz 
 tar zxvf apr-util-1.6.1.tar.gz
@@ -58,10 +58,10 @@ make && make install
 
 
 #####################
-# mod_jk 설치
+# libtool 버전 일치
 #####################
 
-###먼저, libtool 버전 일치 확인
+###먼저, libtool 버전 확인 후 일치되게 만듬
 
 #OS libtool 버전 확인
 whereis libtool
@@ -77,7 +77,10 @@ chmod 644 libtool_org
 ln -s /usr/bin/libtool /app/apache24/build/libtool
 
 
-### mod_jk 설치
+#####################
+# mod_jk 설치
+#####################
+
 cd /app/src
 wget http://10.10.63.63:8089/downloads/apache/tomcat-connectors-1.2.43-src_r20180306.tar.gz
 tar zxvf tomcat-connectors-1.2.43-src_r20180306.tar.gz
@@ -86,10 +89,8 @@ cd /app/src/tomcat-connectors-1.2.43-src/native
 
 make && make install
 
-
 chmod 755 /app/apache24/modules/mod_jk.so
 ll /app/apache24/modules
-
 
 
 ##########################################
@@ -109,7 +110,7 @@ bk httpd-ssl.conf
 # apache : httpd.conf 설정
 ##########################################
 
-#<Dicrectory> 태그 2개를 지우고 그 자리에 넣는다.
+1. <Dicrectory> 태그 2개 영역을 지우거나 주석처리하고 그 자리에 붙여 넣기
 vi /app/apache24/conf/httpd.conf
 ---------------------------------------------------------------------------------------------
 ### Global section
@@ -130,7 +131,7 @@ CustomLog "|/app/apache24/bin/rotatelogs /logs/access.%y%m%d.log 86400 540" comm
 </Directory>
 ---------------------------------------------------------------------------------------------
 
-#mod_ssl 주석해제
+2. mod_ssl 주석해제
 vi /app/apache24/conf/httpd.conf
 ---------------------------------------------------------------------------------------------
 LoadModule ssl_module modules/mod_ssl.so
@@ -141,6 +142,7 @@ grep -v "#" /app/apache24/conf/httpd.conf
 ##########################################
 # apache : httpd-vhosts.conf 설정(IP주소 수정)
 ##########################################
+# 기존 파일을 아래 내용으로 대체
 
 ---------------------------------------------------------------------------------------------
 cat << EOF > /app/apache24/conf/extra/httpd-vhosts.conf
@@ -167,6 +169,7 @@ grep -v "#" /app/apache24/conf/extra/httpd-ssl.conf
 ##########################################
 # apache : httpd-ssl.conf 설정(IP주소 수정)
 ##########################################
+#해당되는 인증서파일을 설정파일이 가리키는 위치에 복사
 
 1. ssl 인증서 디렉토리 생성(root)
 mkdir -p /app/apache24/conf/ssl
