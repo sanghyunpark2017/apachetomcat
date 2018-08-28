@@ -23,32 +23,20 @@ wget http://10.10.63.63:8089/downloads/pcre/pcre-8.42_r180320.tar.gz
 
 
 
-
 #####################
-# OPENSSL 설치
+# PCRE 설치
 #####################
 
-openssl version
-which openssl
-
-yum groupinstall -y "Development tools"
-
-mkdir -p /app/src
+1. 다운로드
+mkdir -p /app/webapps
 cd /app/src
-wget http://10.10.63.63:8089/downloads/apache/openssl-1.1.0h_r20180327.tar.gz
-tar xvzf openssl-1.1.0h_r20180327.tar.gz
+wget http://10.10.63.63:8089/downloads/pcre/pcre-8.42_r180320.tar.gz
+tar zxvf pcre-8.42_r180320.tar.gz
+cd /app/src/pcre-8.42
 
-cd /app/src/openssl-1.1.0h
-./config –fPIC
-
-make
-make install
-
-export LDFLAGS="-L/usr/local/ssl/lib"
-export CPPFLAGS="-I/usr/local/ssl/include"
-
-openssl version
-
+2. 설치
+./configure
+make && make install
 
 
 #####################
@@ -58,10 +46,9 @@ openssl version
 ### 소스파일 준비(httpd-2.4.33)
 #apr과 apr-util은 apache src 하위 디렉토리로 옮긴다
 
-
+1. 다운로드
 mkdir -p /app/webapps
-
-d /app/src
+cd /app/src
 
 wget http://10.10.63.63:8089/downloads/apache/httpd-2.4.33_r20180317.tar.gz
 tar zxvf httpd-2.4.33_r20180317.tar.gz
@@ -74,34 +61,18 @@ wget http://10.10.63.63:8089/downloads/apache/apr-util-1.6.1_r20171022.tar.gz
 tar zxvf apr-util-1.6.1_r20171022.tar.gz
 mv apr-util-1.6.1 /app/src/httpd-2.4.33/srclib/apr-util
 
-###Install (OpenSSL manual update 후 설치)
 
+2. 설치(OpenSSL manual update 후 설치)
 cd /app/src/httpd-2.4.33
 
+case.
 ./configure --prefix=/app/apache24 --enable-modules=shared --enable-mods-shared=all --enable-pie --enable-ssl --with-ssl=/usr/local/ssl --enable-proxy --enable-proxy-balancer -enable-proxy-ajp -enable-proxy-http --enable-rewrite --enable-unique-id --enable-mpms-shared=all --with-included-apr
 
+case. 통상적인 설치 옵션 및 절차
+./configure --prefix=/app/apache24 --enable-proxy --enable-proxy-balancer --enable-proxy-ajp --enable-proxy-http --enable-rewrite --enable-ssl --enable-unique-id --enable-mods-shared=all --enable-modules=shared --enable-mpms-shared=all --with-included-apr
 
 
 make && make install
-
-
-
-4.1 PCRE (Perl Compatilbe Regular Expression. 펄 호환 정규표현식)
-* 설치중 perl 관련 오류가 발생할 수 있다.
-configure: error: pcre-config for libpcre not found. PCRE is required and available from http://pcre.org/
-이경우 pcre를 설치한다.
-
-cd /app/src
-wget http://10.10.63.63:8089/downloads/pcre/pcre-8.42_r180320.tar.gz
-
-
-tar zxvf pcre-8.42_r180320.tar.gz
-cd /app/src/pcre-8.42
-./configure
-make && make install
-
-
-
 
 
 
