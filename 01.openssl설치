@@ -19,6 +19,7 @@ cd openssl-1.0.1u
 ./config -fPIC --prefix=/usr/local/ssl
 make
 make test
+make install
 
 5. 구버전 백업
 which openssl
