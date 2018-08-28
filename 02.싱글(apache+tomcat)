@@ -1,26 +1,7 @@
 
-#Download java
-wget http://10.10.63.63:8089/downloads/java/jdk-6u45-linux-i586.bin
-wget http://10.10.63.63:8089/downloads/java/jdk-6u45-linux-i586-rpm.bin
-wget http://10.10.63.63:8089/downloads/java/jdk-6u45-linux-x64.bin
 
-#Download Apache
-wget http://10.10.63.63:8089/downloads/apache/apr-1.6.3_r20171022.tar.gz
-wget http://10.10.63.63:8089/downloads/apache/apr-util-1.6.1_r20171022.tar.gz
-wget http://10.10.63.63:8089/downloads/apache/httpd-2.4.33_r20180317.tar.gz
-wget http://10.10.63.63:8089/downloads/apache/openssl-1.1.0h_r20180327.tar.gz
-wget http://10.10.63.63:8089/downloads/apache/tomcat-connectors-1.2.43-src_r20180306.tar.gz
-
-#Download Tomcat
-wget http://10.10.63.63:8089/downloads/tomcat/apache-tomcat-7.0.86_r20180413.tar.gz
-wget http://10.10.63.63:8089/downloads/tomcat/apache-tomcat-8.5.30_r20180403.tar.gz
-wget http://10.10.63.63:8089/downloads/tomcat/apache-tomcat-9.0.7_r20180407.tar.gz
-wget http://10.10.63.63:8089/downloads/tomcat/commons-lang3-3.3.2.jar
-
-#Download PCRE
-wget http://10.10.63.63:8089/downloads/pcre/pcre2-10.31_r180212.tar.gz
-wget http://10.10.63.63:8089/downloads/pcre/pcre-8.42_r180320.tar.gz
-
+yum install expat-devel
+yum install gcc*
 
 
 #####################
@@ -28,16 +9,13 @@ wget http://10.10.63.63:8089/downloads/pcre/pcre-8.42_r180320.tar.gz
 #####################
 
 1. 다운로드
-mkdir -p /app/webapps
+mkdir -p /app/src
 cd /app/src
-wget http://10.10.63.63:8089/downloads/pcre/pcre-8.42_r180320.tar.gz
-tar zxvf pcre-8.42_r180320.tar.gz
-cd /app/src/pcre-8.42
-
-2. 설치
+wget http://sourceforge.net/projects/pcre/files/pcre/8.31/pcre-8.31.tar.gz
+tar zxvf pcre-8.31.tar.gz
+cd /app/src/pcre-8.31
 ./configure
 make && make install
-
 
 #####################
 # APACHE 설치
@@ -46,39 +24,36 @@ make && make install
 ### 소스파일 준비(httpd-2.4.33)
 #apr과 apr-util은 apache src 하위 디렉토리로 옮긴다
 
-1. 다운로드
-mkdir -p /app/webapps
+1. apache 다운로드
+mkdir -p /app/src
 cd /app/src
+wget http://apache.mirror.cdnetworks.com/httpd/httpd-2.4.34.tar.gz 
+tar zxvf httpd-2.4.34.tar.gz
 
-wget http://10.10.63.63:8089/downloads/apache/httpd-2.4.33_r20180317.tar.gz
-tar zxvf httpd-2.4.33_r20180317.tar.gz
+2. apr 다운로드
+cd /app/src
+wget http://apache.mirror.cdnetworks.com/apr/apr-1.6.3.tar.gz
+tar zxvf apr-1.6.3.tar.gz
+mv apr-1.6.3 /app/src/httpd-2.4.34/srclib/apr
+ll /app/src/httpd-2.4.34/srclib/
 
-wget http://10.10.63.63:8089/downloads/apache/apr-1.6.3_r20171022.tar.gz
-tar zxvf apr-1.6.3_r20171022.tar.gz
-mv apr-1.6.3 /app/src/httpd-2.4.33/srclib/apr
+3. apr-util 다운로드
+cd /app/src
+wget http://apache.mirror.cdnetworks.com/apr/apr-util-1.6.1.tar.gz 
+tar zxvf apr-util-1.6.1.tar.gz
+mv apr-util-1.6.1 /app/src/httpd-2.4.34/srclib/apr-util
+ll /app/src/httpd-2.4.34/srclib/
 
-wget http://10.10.63.63:8089/downloads/apache/apr-util-1.6.1_r20171022.tar.gz
-tar zxvf apr-util-1.6.1_r20171022.tar.gz
-mv apr-util-1.6.1 /app/src/httpd-2.4.33/srclib/apr-util
+4. apache 설치(OpenSSL manual update 후 설치)
 
+cd /app/src/httpd-2.4.34
 
-2. 설치(OpenSSL manual update 후 설치)
-cd /app/src/httpd-2.4.33
-
-case.
+case. 표준설치 (OpenSSL 수동 업데이트 후 설치)
 ./configure --prefix=/app/apache24 --enable-modules=shared --enable-mods-shared=all --enable-pie --enable-ssl --with-ssl=/usr/local/ssl --enable-proxy --enable-proxy-balancer -enable-proxy-ajp -enable-proxy-http --enable-rewrite --enable-unique-id --enable-mpms-shared=all --with-included-apr
 
 case. 통상적인 설치 옵션 및 절차
 ./configure --prefix=/app/apache24 --enable-proxy --enable-proxy-balancer --enable-proxy-ajp --enable-proxy-http --enable-rewrite --enable-ssl --enable-unique-id --enable-mods-shared=all --enable-modules=shared --enable-mpms-shared=all --with-included-apr
 
-
 make && make install
-
-
-
-
-
-
-
 
 
