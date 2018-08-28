@@ -1,0 +1,39 @@
+
+##################################################
+##########    13. OpenSSL update        ##########  
+##################################################
+
+1. 툴설치
+yum groupinstall -y "Development tools"
+yum install -y perl-CGI
+yum install -y wget
+
+2. 다운로드 
+mkdir -p /app/src
+cd /app/src
+wget https://ftp.openssl.org/source/old/1.0.1/openssl-1.0.1u.tar.gz
+tar zxvf openssl-1.0.1u.tar.gz
+cd openssl-1.0.1u
+
+3. 컴파일
+./config -fPIC --prefix=/usr/local/ssl
+make
+make test
+
+5. 구버전 백업
+which openssl
+/usr/bin/openssl version
+ls -al /usr/bin/openssl
+
+#버전에 맞게 백업
+mv /usr/bin/openssl /usr/bin/openssl.0.2K-fips
+
+6. 신규 설치 버전 심볼릭 링크 설정
+ln -s /usr/local/ssl/bin/openssl /usr/bin/openssl
+
+7. 신규 설치 버전 확인
+which openssl
+/usr/bin/openssl version
+
+openssl version
+
