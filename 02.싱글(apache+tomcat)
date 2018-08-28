@@ -92,11 +92,10 @@ ll /app/apache24/modules
 
 
 
-#####################
-# apache 설정
-#####################
+##########################################
+# apache : 설정파일 백업
+##########################################
 
-1. 설정파일 백업
 cd /app/apache24/conf
 bk httpd.conf
 
@@ -106,8 +105,11 @@ bk httpd-vhosts.conf
 bk httpd-default.conf
 bk httpd-ssl.conf
 
-2. httpd.conf 설정
+##########################################
+# apache : httpd.conf 설정
+##########################################
 
+---------------------------------------------------------------------------------------------
 cat << EOF >> /app/apache24/conf/httpd.conf
 ### Global section
 Include conf/extra/httpd-mpm.conf
@@ -126,11 +128,15 @@ CustomLog "|/app/apache24/bin/rotatelogs /logs/access.%y%m%d.log 86400 540" comm
     Require all granted
 </Directory>
 EOF
+---------------------------------------------------------------------------------------------
 
 grep -v "#" /app/apache24/conf/httpd.conf
 
-3. httpd-vhosts.conf 설정 (IP주소 수정)
+##########################################
+# apache : httpd-vhosts.conf 설정(IP주소 수정)
+##########################################
 
+---------------------------------------------------------------------------------------------
 cat << EOF > /app/apache24/conf/extra/httpd-vhosts.conf
 <VirtualHost *:80>
     ServerAdmin webmaster@homeplus.co.kr
@@ -142,12 +148,93 @@ cat << EOF > /app/apache24/conf/extra/httpd-vhosts.conf
     LogLevel warn
 </VirtualHost>
 EOF
+---------------------------------------------------------------------------------------------
+
+*** awk로 로컬IP주소로 수정토록한다.
 
 grep -v "#" /app/apache24/conf/extra/httpd-vhosts.conf
 
-4. httpd-ssl.conf
+4. httpd-ssl.conf(IP주소수정일단 PASS)
 
-/app/apache24/conf/extra/httpd-vhosts.conf
+grep -v "#" /app/apache24/conf/extra/httpd-ssl.conf
+
+##########################################
+# apache : httpd-ssl.conf 설정(IP주소 수정)
+##########################################
+#vi /app/apache24/conf/extra/httpd-ssl.conf
+#root 소유자이므로 root계정에서 cat으로 파일 새로 만듬
+
+---------------------------------------------------------------------------------------------
+cat << EOF > /app/apache24/conf/extra/httpd-ssl.conf
+SSLPassPhraseDialog  builtin
+SSLSessionCache        "shmcb:/app/apache24/logs/ssl_scache(512000)"
+SSLSessionCacheTimeout  300
+
+<VirtualHost *:443>
+    ServerName 10.10.64.90
+    DocumentRoot "/app/webapps"
+    ErrorLog "|/app/apache24/bin/rotatelogs logs/ssl_error.%Y-%m-%d.log 86400 540"
+    CustomLog "|/app/apache24/bin/rotatelogs logs/ssl_access.%Y-%m-%d.log 86400 540" combined
+    LogLevel warn
+    SSLEngine on
+    SSLProxyEngine on
+    SSLProtocol All -SSLv2 -SSLv3
+    SSLCipherSuite HIGH:MEDIUM:!MD5:!RC4:!3DES
+    SSLProxyCipherSuite HIGH:MEDIUM:!MD5:!RC4:!3DES
+    SSLCertificateFile "/app/apache24/conf/ssl/Wildcard.homeplus.co.kr.crt"
+    SSLCertificateKeyFile "/app/apache24/conf/ssl/Wildcard.homeplus.co.kr.key"
+    SSLCertificateChainFile "/app/apache24/conf/ssl/GLOBALSIGN_ORGANIZATION_VALIDATION_CA__SHA256__G.crt"
+    SSLCACertificateFile "/app/apache24/conf/ssl/GLOBALSIGN_ROOT_CA.crt"
+</VirtualHost>
+EOF
+---------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+grep -v "#" /app/apache24/conf/extra/httpd-ssl.conf
+
+
+
+
+#####################
+# apache 구동스크립트
+#####################
+
+mkdir -p /app/webapps
+
+cd /app/apache24/bin
+bk apachectl
+
+vi /app/apache24/bin/apachectl
+-------------------------------------------------------------------
+#>>>>46번 줄에 추가(HTTPD 밑에 추가)
+HTTPD='/app/apache24/bin/httpd'
+# Source function library.        #add
+. /etc/rc.d/init.d/functions      #add
+
+#>>>>81번 줄에  "$HTTPD -k $ARGV" 줄을 지우고 아래 3개 줄 추가
+case $ACMD in
+start|stop|restart|graceful|graceful-stop)
+    echo -n "$ARGV HTTPD : "      #add
+    daemon $HTTPD -k $ARGV        #add
+    echo                          #add
+    ERROR=$?
+    ;;
+-------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
 
 
 
