@@ -252,7 +252,9 @@ vi /app/apache24/conf/ssl/ssl_pass.sh
 echo "패스위드"
 ---------------------------------------------------------------------------------------------
 
+cd /app/apache24/conf/ssl
 chmod 700 ssl_pass.sh
+ll
 
 
 
@@ -283,6 +285,7 @@ start|stop|restart|graceful|graceful-stop)
 -------------------------------------------------------------------
 
 /app/apache24/bin/apachectl start
+
 
 #####################
 # WWW ROOT에 파일넣기
