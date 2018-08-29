@@ -1,14 +1,49 @@
 
 
+#####################
+# libtool 버전 일치
+#####################
+
+###먼저, libtool 버전 확인 후 일치되게 만듬
+
+#OS libtool 버전 확인
+whereis libtool
+/usr/bin/libtool --version
+
+#Apache libtool  버전 확인
+/app/apache24/build/libtool --version
+
+#버전 정보 차이가 있으면 다음 과정으로 진행 Apache libtool 백업(apache libtool 위치로 이동 후)
+cd /app/apache24/build/
+mv libtool libtool_org
+chmod 644 libtool_org
+ln -s /usr/bin/libtool /app/apache24/build/libtool
+
+
+#####################
+# mod_jk 설치
+#####################
+
+cd /app/src
+wget http://10.10.63.63:8089/downloads/apache/tomcat-connectors-1.2.43-src_r20180306.tar.gz
+tar zxvf tomcat-connectors-1.2.43-src_r20180306.tar.gz
+cd /app/src/tomcat-connectors-1.2.43-src/native
+./configure --with-apxs=/app/apache24/bin/apxs
+
+make && make install
+
+chmod 755 /app/apache24/modules/mod_jk.so
+ll /app/apache24/modules
+
+
+
 #################################
-# httpd.conf MOD_JK 설정(root)
+# httpd.conf MOD_JK 설정파일 위치 추가
 #################################
 
 bk /app/apache24/conf/httpd.conf
 vi /app/apache24/conf/httpd.conf
 -----------------------------------------------------------------------
-LoadModule jk_module modules/mod_jk.so
-
 include conf/mod_jk.conf
 -----------------------------------------------------------------------
 
@@ -20,7 +55,7 @@ include conf/mod_jk.conf
 vi /app/apache24/conf/mod_jk.conf
 -----------------------------------------------------------------------
 ## mod_jk configuration
-#LoadModule jk_module modules/mod_jk.so
+LoadModule jk_module modules/mod_jk.so
 
 <IfModule jk_module>
 JkWorkersFile  conf/extra/workers.properties
@@ -32,6 +67,28 @@ JkLogStampFormat   "[%a %b %d %H:%M:%S %Y] "
     JKWatchdogInterval   60
 #JkShmFile           run/mod_jk.shm
 </IfModule>
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+LoadModule jk_module    modules/mod_jk.so
+
+<IfModule mod_jk.c>
+        JkWorkersFile conf/extra/workers.properties
+        JkLogFile      "|/app/apache24/bin/rotatelogs /logs/web/mod_jk.%y%m%d.log 86400 540"
+        JkLogStampFormat   "[%a %b %d %H:%M:%S %Y] "
+        JkLogLevel info
+        JKWatchdogInterval   60
+        JkOptions +ForwardKeySize +ForwardURICompat -ForwardDirectories
+        JkShmFile logs/jk.shm
+        JkMountFile conf/extra/uriworkermap.properties
+</IfModule>
+
+#<Location /jkstatus/>
+#        jkmount jkstatus
+#        Order deny,allow
+#        #Deny from all
+#        allow from all
+#</Location>
 -----------------------------------------------------------------------
 
 로그디렉토리생성
@@ -48,8 +105,7 @@ mkdir -p /logs/web
 find / -name workers.properties
 find / -name uriworkermap.properties
 
-
-
+cp  *****    /app/apache24/conf/extra 
 
 #################################
 # workers.properties
@@ -63,13 +119,6 @@ grep -v "#" workers.properties
 
 ----------------------------------------------------------------------------
 cat << EOF > /app/apache24/conf/extra/workers.properties
-
-#아래 4줄은 오류 발생
-#worker.list=balancer
-#worker.balancer.type=lb
-#worker.balancer.error_escalation_time=0
-#worker.balancer.max_reply_timeouts=10
-
 worker.list=service1
 worker.service1.type=ajp13
 worker.service1.host=10.10.64.90
@@ -103,8 +152,8 @@ grep -v "#" uriworkermap.properties
 
 ----------------------------------------------------------------------------
 cat << EOF > /app/apache24/conf/extra/uriworkermap.properties
-!/examples/*.jpg=balancer
-/*=service1
+#!/examples/*.jpg=balancer
+#/*=service1
 /*.do=service1
 /*.jsp=service1
 EOF
