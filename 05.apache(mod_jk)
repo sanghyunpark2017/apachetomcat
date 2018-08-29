@@ -38,7 +38,7 @@ ll /app/apache24/modules
 
 
 #################################
-# httpd.conf MOD_JK 설정파일 위치 추가
+# (PASS)httpd.conf MOD_JK 설정파일 위치 추가
 #################################
 
 bk /app/apache24/conf/httpd.conf
@@ -68,8 +68,8 @@ JkLogStampFormat   "[%a %b %d %H:%M:%S %Y] "
 #JkShmFile           run/mod_jk.shm
 </IfModule>
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## mod_jk configuration
 LoadModule jk_module    modules/mod_jk.so
 
 <IfModule mod_jk.c>
@@ -131,8 +131,12 @@ worker.template.connection_pool_timeout=600
 worker.template.reply_timeout=300000
 worker.template.recovery_options=3
 EOF
-
 ----------------------------------------------------------------------------
+
+#IP주소 수정
+vi /app/apache24/conf/extra/workers.properties
+
+
 
 #################################
 # uriworkermap.properties
@@ -142,8 +146,6 @@ bk /app/apache24/conf/extra/uriworkermap.properties
 
 ----------------------------------------------------------------------------
 cat << EOF > /app/apache24/conf/extra/uriworkermap.properties
-#!/examples/*.jpg=balancer
-#/*=service1
 /*.do=service1
 /*.jsp=service1
 EOF
@@ -163,6 +165,36 @@ vi /app/apache24/conf/extra/httpd-vhosts.conf
     JkMount /*.jsp service1    
 </VirtualHost>
 ---------------------------------------------------------------------------------------------
+
+#################################
+# 톰캣 테스트 파일 생성
+#################################
+
+1. 톰캣루트로 이동
+su - wasadm
+cd /app/tomcat7/webapps/ROOT
+
+2. hello.jsp 파일생성
+---------------------------------------------------------------------------------------------
+cat << EOF > hello.jsp
+<%@ page contentType="text/html;charset=utf-8"%>
+<html>
+    <body>
+        <% out.println("InfraCenter" + "<br/>");%>
+            <%String a = "hello test " + "<br/>";%>
+            <%String b = " " + "<br/>";%>
+        <%=a%>
+        <br/>
+        <%
+            for(int i = 1; i <= 10; i++){
+                out.println("Hello World" + i + "<br/>");
+            }
+        %>
+    </body>
+</html>
+EOF
+---------------------------------------------------------------------------------------------
+
 
 
 
