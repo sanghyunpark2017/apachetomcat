@@ -28,7 +28,7 @@ vi .bash_profile
 export PS1='[\u@\h \w]$ '
 
 ###TOMCAT
-export CATALINA_HOME=/app/tomcat8
+export CATALINA_HOME=/app/tomcat7  #디렉토리이름 수정
 export PATH=$PATH:$CATALINA_HOME/bin
 export CLASSPATH=$CLASSPATH:$CATALINA_HOME/lib-jsp-api.jar:$CATALINA_HOME/lib/servlet-api.jar
 ------------------------------------------------------------------------------------
