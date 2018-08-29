@@ -9,10 +9,10 @@ wget http://10.10.63.63:8089/downloads/tomcat/apache-tomcat-8.5.30_r20180403.tar
 wget http://10.10.63.63:8089/downloads/tomcat/apache-tomcat-9.0.7_r20180407.tar.gz
 
 tar zxvf apache-tomcat-7.0.86_r20180413.tar.gz
-
 mv /app/apache-tomcat-7.0.86   /app/tomcat7
-
 chown -R wasadm:wasadm tomcat7
+
+#!!! 여기에 변경한 tomcat디렉토리 이름을 profile에 맞춰줌
 
 
 ###########################
@@ -45,6 +45,8 @@ cd /app/tomcat7/bin
 ./shutdown.sh
 
 
+
+http://x.x.x.x:8080
 
 
 
