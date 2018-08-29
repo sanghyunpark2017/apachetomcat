@@ -217,7 +217,14 @@ EOF
 # 아파치 재기동(root)
 #################################
 
+/app/apache24/bin/apachectl stop
 /app/apache24/bin/apachectl start
+
+http://x.x.x.x/hello.jsp
+https://x.x.x.x/hello.jsp
+
+
+
 
 
 
