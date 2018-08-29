@@ -14,9 +14,8 @@ include conf/mod_jk.conf
 
 
 #################################
-# MOD_JK 설정파일생성(root)
+# mod_jk.conf 파일 생성(root)
 #################################
-
 
 vi /app/apache24/conf/mod_jk.conf
 -----------------------------------------------------------------------
@@ -25,7 +24,7 @@ vi /app/apache24/conf/mod_jk.conf
 
 <IfModule jk_module>
 JkWorkersFile  conf/extra/workers.properties
-JkMountFile   conf/extra/uriworkmap.properties
+JkMountFile   conf/extra/uriworkermap.properties
 JkLogFile      "|/app/apache24/bin/rotatelogs /logs/web/mod_jk.%y%m%d.log 86400 540"
 JkLogStampFormat   "[%a %b %d %H:%M:%S %Y] "
     JkRequestLogFormat  "%w %V %T"
@@ -35,14 +34,90 @@ JkLogStampFormat   "[%a %b %d %H:%M:%S %Y] "
 </IfModule>
 -----------------------------------------------------------------------
 
+로그디렉토리생성
+mkdir -p /logs/web
+
+
+##################################################
+# 설치해둔 커넥터 디렉토리에서 파일복사
+#workers.properties :  연동방식과 IP, Port
+#uriworkermap.properties : 마운트패턴(WAS가 처리)
+##################################################
+
+#앞서 설치한 커넥터 디렉토리를 찾아서 몇개 파일을 /app/apache24/conf/extra 디렉토리에 가져다 놓는다.
+find / -name workers.properties
+find / -name uriworkermap.properties
+
+
+
+
 #################################
-# workers.properties 설정(root)
+# workers.properties
 #################################
 
+bk /app/apache24/conf/extra/workers.properties
+vi /app/apache24/conf/extra/workers.properties
+
+cd /app/apache24/conf/extra/
+grep -v "#" workers.properties
+
+----------------------------------------------------------------------------
+cat << EOF > /app/apache24/conf/extra/workers.properties
+
+#아래 4줄은 오류 발생
+#worker.list=balancer
+#worker.balancer.type=lb
+#worker.balancer.error_escalation_time=0
+#worker.balancer.max_reply_timeouts=10
+
+worker.list=service1
+worker.service1.type=ajp13
+worker.service1.host=10.10.64.90
+worker.service1.port=8009
+
+worker.balancer.error_escalation_time=0
+worker.balancer.max_reply_timeouts=10
+worker.template.socket_connect_timeout=5000
+worker.template.socket_keepalive=true
+worker.template.ping_mode=A
+worker.template.ping_timeout=10000
+worker.template.connection_pool_minsize=0
+worker.template.connection_pool_timeout=600
+worker.template.reply_timeout=300000
+worker.template.recovery_options=3
+EOF
+
+----------------------------------------------------------------------------
 
 
 
+#################################
+# uriworkermap.properties
+#################################
 
+bk /app/apache24/conf/extra/uriworkermap.properties
+vi /app/apache24/conf/extra/uriworkermap.properties
+
+cd /app/apache24/conf/extra/
+grep -v "#" uriworkermap.properties
+
+----------------------------------------------------------------------------
+cat << EOF > /app/apache24/conf/extra/uriworkermap.properties
+!/examples/*.jpg=balancer
+/*=service1
+/*.do=service1
+/*.jsp=service1
+EOF
+
+----------------------------------------------------------------------------
+
+
+
+#################################
+# 아파치 재기동
+#################################
+
+/app/apache24/bin/apachectl start
 
 
 
