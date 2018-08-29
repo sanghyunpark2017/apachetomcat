@@ -21,7 +21,7 @@ ln -s /usr/bin/libtool /app/apache24/build/libtool
 
 
 #####################
-# mod_jk 설치
+# mod_jk 설치(root)
 #####################
 
 cd /app/src
@@ -38,13 +38,15 @@ ll /app/apache24/modules
 
 
 #################################
-# (PASS)httpd.conf MOD_JK 설정파일 위치 추가
+# httpd.conf MOD_JK 설정파일 위치 추가
 #################################
 
 bk /app/apache24/conf/httpd.conf
-vi /app/apache24/conf/httpd.conf
+
 -----------------------------------------------------------------------
+cat << EOF >> /app/apache24/conf/httpd.conf
 include conf/mod_jk.conf
+EOF
 -----------------------------------------------------------------------
 
 
@@ -67,8 +69,11 @@ JkLogStampFormat   "[%a %b %d %H:%M:%S %Y] "
     JKWatchdogInterval   60
 #JkShmFile           run/mod_jk.shm
 </IfModule>
+-----------------------------------------------------------------------
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+vi /app/apache24/conf/mod_jk.conf
+-----------------------------------------------------------------------
 ## mod_jk configuration
 LoadModule jk_module    modules/mod_jk.so
 
@@ -101,18 +106,23 @@ mkdir -p /logs/web
 #uriworkermap.properties : 마운트패턴(WAS가 처리)
 ##################################################
 
-#앞서 설치한 커넥터 디렉토리를 찾아서 몇개 파일을 /app/apache24/conf/extra 디렉토리에 가져다 놓는다.
+#앞서 설치한 커넥터 디렉토리에서 몇개 파일을 /app/apache24/conf/extra 디렉토리에 가져다 놓는다.
+#이 파일을 사용하지 않으나 백업은 해둔다 (향후 설정 참조용)
+
 find / -name workers.properties
 find / -name uriworkermap.properties
 
 cp  *****    /app/apache24/conf/extra 
 
+bk /app/apache24/conf/extra/workers.properties
+bk /app/apache24/conf/extra/uriworkermap.properties
+
+
 #################################
 # workers.properties
 #################################
 
-bk /app/apache24/conf/extra/workers.properties
-
+#새로생성(IP주소는 맞게 수정)
 ----------------------------------------------------------------------------
 cat << EOF > /app/apache24/conf/extra/workers.properties
 worker.list=service1
@@ -131,19 +141,15 @@ worker.template.connection_pool_timeout=600
 worker.template.reply_timeout=300000
 worker.template.recovery_options=3
 EOF
+
 ----------------------------------------------------------------------------
-
-#IP주소 수정
-vi /app/apache24/conf/extra/workers.properties
-
 
 
 #################################
 # uriworkermap.properties
 #################################
 
-bk /app/apache24/conf/extra/uriworkermap.properties
-
+#새로생성
 ----------------------------------------------------------------------------
 cat << EOF > /app/apache24/conf/extra/uriworkermap.properties
 /*.do=service1
@@ -207,11 +213,8 @@ cat << EOF > hello.jsp
 EOF
 ---------------------------------------------------------------------------------------------
 
-
-
-
 #################################
-# 아파치 재기동
+# 아파치 재기동(root)
 #################################
 
 /app/apache24/bin/apachectl start
