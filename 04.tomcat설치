@@ -12,28 +12,20 @@ tar zxvf apache-tomcat-7.0.86_r20180413.tar.gz
 mv /app/apache-tomcat-7.0.86   /app/tomcat7
 chown -R wasadm:wasadm tomcat7
 
-#!!! 여기에 변경한 tomcat디렉토리 이름을 profile에 맞춰줌
-
-
 ###########################
 # 환경변수등록
 ###########################
-#위에 tomcatX 디렉토리 명으로 수정
+#wasadm 프로파일에 tocmat디렉토리 이름에 맞춰 수정
 
 #wasadm 프로파일
 su - wasadm
 vi .bash_profile
 ------------------------------------------------------------------------------------
-# User specific environment and startup programs
-export PS1='[\u@\h \w]$ '
-
 ###TOMCAT
-export CATALINA_HOME=/app/tomcat7  #디렉토리이름 수정
+export CATALINA_HOME=/app/tomcat7  #update this
 export PATH=$PATH:$CATALINA_HOME/bin
 export CLASSPATH=$CLASSPATH:$CATALINA_HOME/lib-jsp-api.jar:$CATALINA_HOME/lib/servlet-api.jar
 ------------------------------------------------------------------------------------
-
-
 
 
 ###########################
@@ -45,7 +37,7 @@ cd /app/tomcat7/bin
 ./shutdown.sh
 
 
-
+#톰캣 내장 웹서버(8080) 통해서 테스트페이지 접속 테스트
 http://x.x.x.x:8080
 
 
