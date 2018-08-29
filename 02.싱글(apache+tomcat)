@@ -110,7 +110,8 @@ bk httpd-ssl.conf
 # apache : httpd.conf 설정
 ##########################################
 
-1. <Dicrectory> 태그 2개 영역을 지우거나 주석처리하고 그 자리에 붙여 넣기
+1. <Dicrectory> 태그 2개 영역과 DocumentRoot를 지우거나 주석처리하고 그 자리에 붙여 넣기
+
 vi /app/apache24/conf/httpd.conf
 ---------------------------------------------------------------------------------------------
 ### Global section
@@ -191,15 +192,15 @@ wget http://10.10.63.63:8089/downloads/cert/star.aafood.co.kr/GLOBALSIGN_ROOT_CA
 ll
 
 3. httpd-ssl.conf파일은 아래 내용으로 새로 만듬(root)
-vi /app/apache24/conf/extra/httpd-ssl.conf
-#인증서 암호가 걸려있으면 "SSLPassPhraseDialog" 사용
+#vi /app/apache24/conf/extra/httpd-ssl.conf
+
 ---------------------------------------------------------------------------------------------
 cat << EOF > /app/apache24/conf/extra/httpd-ssl.conf
 
 #SSLPassPhraseDialog  builtin
 #SSLPassPhraseDialog "/app/apache24/conf/ssl/ssl_pass.sh"  
-#SSLSessionCache        "shmcb:/app/apache24/logs/ssl_scache(512000)"
-#SSLSessionCacheTimeout  300
+SSLSessionCache        "shmcb:/app/apache24/logs/ssl_scache(512000)"
+SSLSessionCacheTimeout  300
 
 Listen 443       
 
@@ -225,7 +226,7 @@ EOF
 clear
 grep -v "#" /app/apache24/conf/extra/httpd-ssl.conf
 
-4. 인증서암호 입력 쉘작성
+4. 인증서암호 입력 쉘작성(PASS)
 
 vi /app/apache24/conf/ssl/ssl_pass.sh
 ---------------------------------------------------------------------------------------------
@@ -253,7 +254,7 @@ HTTPD='/app/apache24/bin/httpd'
 # Source function library.        #add
 . /etc/rc.d/init.d/functions      #add
 
-#>>>>81번 줄에  "$HTTPD -k $ARGV" 줄을 지우고 아래 3개 줄 추가
+#>>>>83번 줄에  "$HTTPD -k $ARGV" 줄을 지우고 아래 3개 줄 추가
 case $ACMD in
 start|stop|restart|graceful|graceful-stop)
     echo -n "$ARGV HTTPD : "      #add
@@ -263,9 +264,7 @@ start|stop|restart|graceful|graceful-stop)
     ;;
 -------------------------------------------------------------------
 
-
 /app/apache24/bin/apachectl start
-
 
 #####################
 # WWW ROOT에 파일넣기
@@ -274,13 +273,6 @@ start|stop|restart|graceful|graceful-stop)
 cd /app/webapps
 wget http://10.10.63.63:8089/downloads/testpages/hello.html
 wget http://10.10.63.63:8089/downloads/testpages/index.html
-
-
-
-
-
-
-
 
 
 
