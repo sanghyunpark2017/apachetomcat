@@ -77,20 +77,7 @@ chmod 644 libtool_org
 ln -s /usr/bin/libtool /app/apache24/build/libtool
 
 
-#####################
-# mod_jk 설치
-#####################
 
-cd /app/src
-wget http://10.10.63.63:8089/downloads/apache/tomcat-connectors-1.2.43-src_r20180306.tar.gz
-tar zxvf tomcat-connectors-1.2.43-src_r20180306.tar.gz
-cd /app/src/tomcat-connectors-1.2.43-src/native
-./configure --with-apxs=/app/apache24/bin/apxs
-
-make && make install
-
-chmod 755 /app/apache24/modules/mod_jk.so
-ll /app/apache24/modules
 
 
 ##########################################
