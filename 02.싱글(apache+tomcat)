@@ -110,7 +110,7 @@ Include conf/extra/httpd-ssl.conf
 ### Main server configuration
 ServerName localhost:80
 ErrorLog "|/app/apache24/bin/rotatelogs logs/error.%y%m%d.log 86400 540"
-CustomLog "|/app/apache24/bin/rotatelogs /logs/access.%y%m%d.log 86400 540" common
+CustomLog "|/app/apache24/bin/rotatelogs logs/access.%y%m%d.log 86400 540" common
 <Directory "/app/webapps">
     Options IncludesNoExec
     Order allow,deny
@@ -135,6 +135,7 @@ grep -v "#" /app/apache24/conf/httpd.conf
 # apache : httpd-vhosts.conf 설정(IP주소 수정)
 ##########################################
 # 기존 파일을 아래 내용으로 대체
+#vi /app/apache24/conf/extra/httpd-vhosts.conf
 
 ---------------------------------------------------------------------------------------------
 cat << EOF > /app/apache24/conf/extra/httpd-vhosts.conf
@@ -150,13 +151,7 @@ cat << EOF > /app/apache24/conf/extra/httpd-vhosts.conf
 EOF
 ---------------------------------------------------------------------------------------------
 
-*** awk로 로컬IP주소로 수정토록한다.
-
 grep -v "#" /app/apache24/conf/extra/httpd-vhosts.conf
-
-4. httpd-ssl.conf(IP주소수정일단 PASS)
-
-grep -v "#" /app/apache24/conf/extra/httpd-ssl.conf
 
 ##########################################
 # apache : httpd-ssl.conf 설정(IP주소 수정)
