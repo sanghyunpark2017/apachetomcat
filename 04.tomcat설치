@@ -1,9 +1,6 @@
 
-
-
-
 #######################
-# TOMCAT 설치
+# TOMCAT 설치(root)
 #######################
 
 cd /app/
@@ -11,11 +8,41 @@ wget http://10.10.63.63:8089/downloads/tomcat/apache-tomcat-7.0.86_r20180413.tar
 wget http://10.10.63.63:8089/downloads/tomcat/apache-tomcat-8.5.30_r20180403.tar.gz
 wget http://10.10.63.63:8089/downloads/tomcat/apache-tomcat-9.0.7_r20180407.tar.gz
 
-tar zxvf 파일명
+tar zxvf apache-tomcat-7.0.86_r20180413.tar.gz
+
+mv /app/apache-tomcat-7.0.86   /app/tomcat7
+
+chown -R wasadm:wasadm tomcat7
+
+
+###########################
+# 환경변수등록
+###########################
+#위에 tomcatX 디렉토리 명으로 수정
+
+#wasadm 프로파일
+su - wasadm
+vi .bash_profile
+------------------------------------------------------------------------------------
+# User specific environment and startup programs
+export PS1='[\u@\h \w]$ '
+
+###TOMCAT
+export CATALINA_HOME=/app/tomcat8
+export PATH=$PATH:$CATALINA_HOME/bin
+export CLASSPATH=$CLASSPATH:$CATALINA_HOME/lib-jsp-api.jar:$CATALINA_HOME/lib/servlet-api.jar
+------------------------------------------------------------------------------------
 
 
 
 
+###########################
+# 테스트 기동(wasadm)
+###########################
+
+cd /app/tomcat7/bin
+./startup.sh
+./shutdown.sh
 
 
 
