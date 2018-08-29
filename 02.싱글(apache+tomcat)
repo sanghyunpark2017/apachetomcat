@@ -1,7 +1,7 @@
 
 #필요한 툴 설치(Centos7)
-yum install expat-devel
-yum install gcc*
+yum install -y expat-devel
+yum install -y gcc*
 
 
 #####################
