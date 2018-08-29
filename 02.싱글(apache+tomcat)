@@ -131,10 +131,11 @@ CustomLog "|/app/apache24/bin/rotatelogs /logs/access.%y%m%d.log 86400 540" comm
 </Directory>
 ---------------------------------------------------------------------------------------------
 
-2. mod_ssl 주석해제
+2. mod_ssl과 mod_socache_shmcb 주석해제
 vi /app/apache24/conf/httpd.conf
 ---------------------------------------------------------------------------------------------
 LoadModule ssl_module modules/mod_ssl.so
+LoadModule socache_shmcb_module modules/mod_socache_shmcb.so
 ---------------------------------------------------------------------------------------------
 
 
