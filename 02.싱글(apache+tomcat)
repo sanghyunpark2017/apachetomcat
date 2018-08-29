@@ -137,7 +137,10 @@ vi /app/apache24/conf/httpd.conf
 LoadModule ssl_module modules/mod_ssl.so
 ---------------------------------------------------------------------------------------------
 
+
 grep -v "#" /app/apache24/conf/httpd.conf
+
+
 
 ##########################################
 # apache : httpd-vhosts.conf 설정(IP주소 수정)
@@ -170,30 +173,37 @@ grep -v "#" /app/apache24/conf/extra/httpd-ssl.conf
 # apache : httpd-ssl.conf 설정(IP주소 수정)
 ##########################################
 #해당되는 인증서파일을 설정파일이 가리키는 위치에 복사
+#아래 예제는 인증서 암호 포함됨
+#인증서파일을 임시웹서버에서 wget으로 가져오나 mine설정으로 key파일을 zip확장으로 변경했음
 
-1. ssl 인증서 디렉토리 생성(root)
+1. ssl 인증서 담을 디렉토리 생성(root)
 mkdir -p /app/apache24/conf/ssl
 
 2. 인증서파일 생성(복사)
 cd /app/apache24/conf/ssl
-wget http://10.10.63.63:8089/downloads/cert/star.homeplus.co.kr/Wildcard.homeplus.co.kr.crt
-wget http://10.10.63.63:8089/downloads/cert/star.homeplus.co.kr/Wildcard.homeplus.co.kr.key.zip
-mv Wildcard.homeplus.co.kr.key.zip Wildcard.homeplus.co.kr.key
+wget http://10.10.63.63:8089/downloads/cert/star.aafood.co.kr/Wildcard.aafood.co.kr.crt
+wget http://10.10.63.63:8089/downloads/cert/star.aafood.co.kr/Wildcard.aafood.co.kr.key.zip
+mv Wildcard.aafood.co.kr.key.zip Wildcard.aafood.co.kr.key
 
-wget http://10.10.63.63:8089/downloads/cert/star.homeplus.co.kr/GLOBALSIGN_ORGANIZATION_VALIDATION_CA__SHA256__G.crt
-wget http://10.10.63.63:8089/downloads/cert/star.homeplus.co.kr/GLOBALSIGN_ROOT_CA.crt
-
+wget http://10.10.63.63:8089/downloads/cert/star.aafood.co.kr/GLOBALSIGN_ORGANIZATION_VALIDATION_CA__SHA256__G.crt
+wget http://10.10.63.63:8089/downloads/cert/star.aafood.co.kr/GLOBALSIGN_ROOT_CA.crt
 ll
 
-3. root 소유자이므로 root계정에서 cat으로 파일 새로 만듬
-#vi /app/apache24/conf/extra/httpd-ssl.conf
+3. httpd-ssl.conf파일은 아래 내용으로 새로 만듬(root)
+vi /app/apache24/conf/extra/httpd-ssl.conf
+#인증서 암호가 걸려있으면 "SSLPassPhraseDialog" 사용
 ---------------------------------------------------------------------------------------------
 cat << EOF > /app/apache24/conf/extra/httpd-ssl.conf
 
-Listen 443
+#SSLPassPhraseDialog  builtin
+#SSLPassPhraseDialog "/app/apache24/conf/ssl/ssl_pass.sh"  
+#SSLSessionCache        "shmcb:/app/apache24/logs/ssl_scache(512000)"
+#SSLSessionCacheTimeout  300
+
+Listen 443       
 
 <VirtualHost *:443>
-    ServerName devaaf.homeplus.co.kr
+    ServerName devaaf.aafood.co.kr
     DocumentRoot "/app/webapps"
     ErrorLog "|/app/apache24/bin/rotatelogs logs/ssl_error.%Y-%m-%d.log 86400 540"
     CustomLog "|/app/apache24/bin/rotatelogs logs/ssl_access.%Y-%m-%d.log 86400 540" combined
@@ -203,8 +213,8 @@ Listen 443
     SSLProtocol All -SSLv2 -SSLv3
     SSLCipherSuite HIGH:MEDIUM:!MD5:!RC4:!3DES
     SSLProxyCipherSuite HIGH:MEDIUM:!MD5:!RC4:!3DES
-    SSLCertificateFile "/app/apache24/conf/ssl/Wildcard.homeplus.co.kr.crt"
-    SSLCertificateKeyFile "/app/apache24/conf/ssl/Wildcard.homeplus.co.kr.key"
+    SSLCertificateFile "/app/apache24/conf/ssl/Wildcard.aafood.co.kr.crt"
+    SSLCertificateKeyFile "/app/apache24/conf/ssl/Wildcard.aafood.co.kr.key"
     SSLCertificateChainFile "/app/apache24/conf/ssl/GLOBALSIGN_ORGANIZATION_VALIDATION_CA__SHA256__G.crt"
     SSLCACertificateFile "/app/apache24/conf/ssl/GLOBALSIGN_ROOT_CA.crt"
 </VirtualHost>
@@ -214,11 +224,21 @@ EOF
 clear
 grep -v "#" /app/apache24/conf/extra/httpd-ssl.conf
 
+4. 인증서암호 입력 쉘작성
+
+vi /app/apache24/conf/ssl/ssl_pass.sh
+---------------------------------------------------------------------------------------------
+#!/bin/sh
+echo "패스위드"
+---------------------------------------------------------------------------------------------
+
+chmod 700 ssl_pass.sh
 
 
-#####################
-# apache 구동스크립트
-#####################
+
+##############################
+# apache 구동스크립트 수정
+##############################
 
 mkdir -p /app/webapps
 
@@ -242,12 +262,17 @@ start|stop|restart|graceful|graceful-stop)
     ;;
 -------------------------------------------------------------------
 
+
 /app/apache24/bin/apachectl start
 
 
 #####################
 # WWW ROOT에 파일넣기
 #####################
+
+cd /app/webapps
+wget http://10.10.63.63:8089/downloads/testpages/hello.html
+wget http://10.10.63.63:8089/downloads/testpages/index.html
 
 
 
