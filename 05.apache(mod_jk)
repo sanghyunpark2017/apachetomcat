@@ -154,10 +154,11 @@ EOF
 
 
 ##########################################
-# httpd-vhosts.conf 설정
+# httpd-vhosts와 httpd-ssl에 JkMount설정
 ##########################################
-#vhosts 설정에 "uriworkermap.properties" 동일하게 하여 JkMount 추가함
+#"uriworkermap.properties" 동일하게 하여 JkMount 추가함
 
+###TCP 80
 vi /app/apache24/conf/extra/httpd-vhosts.conf
 ---------------------------------------------------------------------------------------------
 <VirtualHost *:80>
@@ -165,6 +166,17 @@ vi /app/apache24/conf/extra/httpd-vhosts.conf
     JkMount /*.jsp service1    
 </VirtualHost>
 ---------------------------------------------------------------------------------------------
+
+###TCP 443
+vi /app/apache24/conf/extra/httpd-ssl.conf
+---------------------------------------------------------------------------------------------
+<VirtualHost *:443>
+    JkMount /*.do service1
+    JkMount /*.jsp service1    
+</VirtualHost>
+---------------------------------------------------------------------------------------------
+
+
 
 #################################
 # 톰캣 테스트 파일 생성
