@@ -1,0 +1,60 @@
+
+
+#################################
+# httpd.conf MOD_JK 설정(root)
+#################################
+
+bk /app/apache24/conf/httpd.conf
+vi /app/apache24/conf/httpd.conf
+-----------------------------------------------------------------------
+LoadModule jk_module modules/mod_jk.so
+
+include conf/mod_jk.conf
+-----------------------------------------------------------------------
+
+
+#################################
+# MOD_JK 설정파일생성(root)
+#################################
+
+
+vi /app/apache24/conf/mod_jk.conf
+-----------------------------------------------------------------------
+## mod_jk configuration
+#LoadModule jk_module modules/mod_jk.so
+
+<IfModule jk_module>
+JkWorkersFile  conf/extra/workers.properties
+JkMountFile   conf/extra/uriworkmap.properties
+JkLogFile      "|/app/apache24/bin/rotatelogs /logs/web/mod_jk.%y%m%d.log 86400 540"
+JkLogStampFormat   "[%a %b %d %H:%M:%S %Y] "
+    JkRequestLogFormat  "%w %V %T"
+    JkLogLevel           info
+    JKWatchdogInterval   60
+#JkShmFile           run/mod_jk.shm
+</IfModule>
+-----------------------------------------------------------------------
+
+#################################
+# workers.properties 설정(root)
+#################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
