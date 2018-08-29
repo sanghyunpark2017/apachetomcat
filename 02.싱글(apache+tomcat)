@@ -77,9 +77,6 @@ chmod 644 libtool_org
 ln -s /usr/bin/libtool /app/apache24/build/libtool
 
 
-
-
-
 ##########################################
 # apache : 설정파일 백업
 ##########################################
@@ -219,7 +216,7 @@ ll
 cat << EOF > /app/apache24/conf/extra/httpd-ssl.conf
 
 #SSLPassPhraseDialog  builtin
-#SSLPassPhraseDialog "/app/apache24/conf/ssl/ssl_pass.sh"  
+SSLPassPhraseDialog  exec:/app/apache24/conf/ssl/ssl_pass.sh
 SSLSessionCache        "shmcb:/app/apache24/logs/ssl_scache(512000)"
 SSLSessionCacheTimeout  300
 
@@ -247,7 +244,7 @@ EOF
 clear
 grep -v "#" /app/apache24/conf/extra/httpd-ssl.conf
 
-4. 인증서암호 입력 쉘작성(PASS)
+4. 인증서암호 입력 쉘작성
 
 vi /app/apache24/conf/ssl/ssl_pass.sh
 ---------------------------------------------------------------------------------------------
