@@ -83,12 +83,12 @@ LoadModule jk_module    modules/mod_jk.so
         JkMountFile conf/extra/uriworkermap.properties
 </IfModule>
 
-#<Location /jkstatus/>
-#        jkmount jkstatus
-#        Order deny,allow
-#        #Deny from all
-#        allow from all
-#</Location>
+<Location /jkstatus/>
+        jkmount jkstatus
+        Order deny,allow
+        #Deny from all
+        allow from all
+</Location>
 -----------------------------------------------------------------------
 
 로그디렉토리생성
