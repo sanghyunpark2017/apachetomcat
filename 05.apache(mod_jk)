@@ -112,10 +112,6 @@ cp  *****    /app/apache24/conf/extra
 #################################
 
 bk /app/apache24/conf/extra/workers.properties
-vi /app/apache24/conf/extra/workers.properties
-
-cd /app/apache24/conf/extra/
-grep -v "#" workers.properties
 
 ----------------------------------------------------------------------------
 cat << EOF > /app/apache24/conf/extra/workers.properties
@@ -138,17 +134,11 @@ EOF
 
 ----------------------------------------------------------------------------
 
-
-
 #################################
 # uriworkermap.properties
 #################################
 
 bk /app/apache24/conf/extra/uriworkermap.properties
-vi /app/apache24/conf/extra/uriworkermap.properties
-
-cd /app/apache24/conf/extra/
-grep -v "#" uriworkermap.properties
 
 ----------------------------------------------------------------------------
 cat << EOF > /app/apache24/conf/extra/uriworkermap.properties
