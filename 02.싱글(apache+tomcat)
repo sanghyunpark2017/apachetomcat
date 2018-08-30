@@ -139,7 +139,8 @@ grep -v "#" /app/apache24/conf/httpd.conf
 # 기존 파일을 아래 내용으로 대체
 #vi /app/apache24/conf/extra/httpd-vhosts.conf
 
-1. 로그디렉토리생성
+1. 웹루트와 로그디렉토리생성
+mkdir -p /app/webapps
 mkdir -p /logs/web
 
 2. 새로생성
